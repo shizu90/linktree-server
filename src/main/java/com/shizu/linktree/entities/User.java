@@ -23,15 +23,19 @@ public class User implements Serializable{
 	@Column(unique=true)
 	private String email;
 	private String password;
+	private String description;
+	private String userImg;
 	@OneToOne(mappedBy="user")
 	private LinkTree linkTree;
 	
 	public User() {}
-	public User(Long id, String username, String email, String password, LinkTree linkTree) {
+	public User(Long id, String username, String email, String password, String description, String userImg, LinkTree linkTree) {
 		this.id = id;
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.description = description;
+		this.userImg = userImg;
 		this.linkTree = linkTree;
 	}
 	public Long getId() {
@@ -57,6 +61,18 @@ public class User implements Serializable{
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getUserImg() {
+		return userImg;
+	}
+	public void setUserImg(String userImg) {
+		this.userImg = userImg;
 	}
 	public LinkTree getLinkTree() {
 		return linkTree;

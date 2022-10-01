@@ -52,7 +52,11 @@ public class UserService {
 	}
 	
 	public User findByUsername(String username) {
-		return repo.findByUsername(username).get(0);
+		if(repo.findByUsername(username) != null) {
+			return repo.findByUsername(username).get(0);
+		}else {
+			throw new ResourceNotFoundException("User not found.");
+		}
 	}
 	
 	public User insert(RegisterDTO credentials) {
@@ -62,7 +66,7 @@ public class UserService {
 		if(!credentials.getConfirmPassword().matches(credentials.getPassword())) throw new InvalidFormatException("Passwords mismatch.");
 		try {
 			credentials.setPassword(encryptPassword(credentials.getPassword()));
-			User user = new User(null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), null);
+			User user = new User(null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), "", "", null);
 			return repo.save(user);
 		}catch(ConstraintViolationException e) {
 			throw new AlreadyExistsException("Email or username already exists.");
@@ -81,9 +85,8 @@ public class UserService {
 	}
 	
 	public void update(User obj, String token) {
-		String decodedToken = decodeJwtToken(token);
 		try {
-			User user = findById(decodedToken);
+			User user = findById(token);
 			updateData(user, obj);
 			repo.save(user);
 		}catch(EntityNotFoundException e) {
@@ -94,7 +97,8 @@ public class UserService {
 	private void updateData(User user, User obj) {
 		user.setUsername(obj.getUsername());
 		user.setEmail(obj.getEmail());
-		user.setPassword(obj.getPassword());
+		user.setPassword(encryptPassword(obj.getPassword()));
+		user.setDescription(obj.getDescription());
 	}
 	
 	public String login(RegisterDTO credentials) {

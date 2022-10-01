@@ -24,16 +24,20 @@ public class LinkTree {
 	private User user;
 	@OneToMany(mappedBy="linkTree")
 	private List<Link> links;
+	private String username;
+	private String description;
 	private String userImg;
 	private String colorTheme;
 	
 	public LinkTree() {}
-	public LinkTree(Long id, User user, List<Link> links, String userImg, String colorTheme) {
+	public LinkTree(Long id, User user, List<Link> links, String colorTheme) {
 		this.id = id;
 		this.user = user;
 		this.links = links;
-		this.userImg = userImg;
+		this.userImg = user.getUserImg();
 		this.colorTheme = colorTheme;
+		this.setUsername(user.getUsername());
+		this.setDescription(user.getDescription());
 	}
 	public Long getId() {
 		return id;
@@ -52,6 +56,18 @@ public class LinkTree {
 	}
 	public void setLinks(List<Link> links) {
 		this.links = links;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public String getUserImg() {
 		return userImg;

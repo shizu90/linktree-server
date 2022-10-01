@@ -21,7 +21,7 @@ public class LinkTreeService {
 		return linkTree.orElseThrow(() -> new RuntimeException());
 	}
 	
-	public LinkTree findByUser(User user) {	
+	public LinkTree findByUser(User user) {
 		LinkTree linkTree = repo.findByUser(user).get(0);
 		return linkTree;
 	}
@@ -47,6 +47,8 @@ public class LinkTreeService {
 	
 	public void updateData(LinkTree linkTree, LinkTree obj) {
 		linkTree.setColorTheme(obj.getColorTheme());
+		linkTree.setDescription(obj.getDescription());
+		linkTree.setUsername(obj.getUsername());
 		linkTree.setUserImg(obj.getUserImg());
 	}
 }

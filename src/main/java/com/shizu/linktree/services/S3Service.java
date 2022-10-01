@@ -12,8 +12,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.shizu.linktree.entities.LinkTree;
-import com.shizu.linktree.repositories.LinkTreeRepository;
+import com.shizu.linktree.entities.User;
+import com.shizu.linktree.repositories.UserRepository;
 
 @Service
 public class S3Service {
@@ -22,19 +22,19 @@ public class S3Service {
 	private AmazonS3Client s3Client;
 	
 	@Autowired
-	private LinkTreeService service;
+	private UserService service;
 	
 	@Autowired
-	private LinkTreeRepository repo;
+	private UserRepository repo;
 	
-	public String uploadFile(Long id, MultipartFile file) {
+	public String uploadFile(String token, MultipartFile file) {
 		try {
 			File uploadedFile = new File(file.getOriginalFilename());
 			FileOutputStream fileStream = new FileOutputStream(uploadedFile);
 			fileStream.write(file.getBytes());
 			fileStream.close();
-			LinkTree linkTree = service.findById(id);
-			String fileName = linkTree.getUser().getUsername() + "_userImg";
+			User user = service.findById(token);
+			String fileName = user.getUsername() + "_userImg";
 			try {
 				s3Client.deleteObject("linktree-upload", fileName);
 			}catch(AmazonServiceException e) {
@@ -43,8 +43,8 @@ public class S3Service {
 			s3Client.putObject(new PutObjectRequest("linktree-upload", fileName, uploadedFile).withCannedAcl(CannedAccessControlList.PublicRead));
 			String url = s3Client.getResourceUrl("linktree-upload", fileName);
 			uploadedFile.delete();
-			linkTree.setUserImg(url);
-			repo.save(linkTree);
+			user.setUserImg(url);
+			repo.save(user);
 			return url;
 		}catch(IOException e) {
 			throw new RuntimeException("Failed to upload file.");

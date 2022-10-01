@@ -36,7 +36,7 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(UnauthorizedException.class)
 	public ResponseEntity<StandardError> unauthorized(UnauthorizedException e, HttpServletRequest request) {
-		String error = "Database error";
+		String error = "Unauthorized request";
 		HttpStatus status = HttpStatus.UNAUTHORIZED;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
@@ -44,7 +44,7 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(InvalidFormatException.class)
 	public ResponseEntity<StandardError> invalidFormat(InvalidFormatException e, HttpServletRequest request) {
-		String error = "Database error";
+		String error = "Invalid format";
 		HttpStatus status = HttpStatus.CONFLICT;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
@@ -52,7 +52,7 @@ public class ResourceExceptionHandler {
 	
 	@ExceptionHandler(AlreadyExistsException.class)
 	public ResponseEntity<StandardError> alreadyExists(AlreadyExistsException e, HttpServletRequest request) {
-		String error = "Database error";
+		String error = "Already exists";
 		HttpStatus status = HttpStatus.FORBIDDEN;
 		StandardError err = new StandardError(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);

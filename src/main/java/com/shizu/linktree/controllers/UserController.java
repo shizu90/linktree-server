@@ -41,6 +41,12 @@ public class UserController {
 		return ResponseEntity.ok().body(user);
 	}
 	
+	@GetMapping(value = "/validate/{token}")
+	public ResponseEntity<String> validateJwt(@PathVariable String token) {
+		String subject = service.decodeJwtToken(token);
+		return ResponseEntity.ok().body(subject);
+	}
+	
 	@PostMapping
 	public ResponseEntity<User> postUser(@RequestBody RegisterDTO credentials) {
 		User obj = service.insert(credentials);
@@ -57,6 +63,8 @@ public class UserController {
 	@PostMapping(value = "/uploadImg")
 	public ResponseEntity<String> postImg(@RequestParam(name = "file") MultipartFile file, @RequestHeader(value = "authorization", defaultValue ="") String token) throws IOException {
 		String url = s3Service.uploadFile(token, file);
+		User user = service.findById(token);
+		linkTreeService.update(user.getLinkTree().getId(), new LinkTree(user.getLinkTree().getId(), user, null, user.getLinkTree().getColorTheme()));
 		return ResponseEntity.ok().body(url);
 	}
 	
@@ -68,7 +76,9 @@ public class UserController {
 	
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody User user, @RequestHeader(value = "authorization", defaultValue ="") String token) {
+		User userObj = service.findById(token);
 		service.update(user, token);
+		linkTreeService.update(id, new LinkTree(userObj.getLinkTree().getId(), userObj, null, userObj.getLinkTree().getColorTheme()));
 		return ResponseEntity.ok().body(null);
 	}
 	

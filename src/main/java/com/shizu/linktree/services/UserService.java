@@ -95,15 +95,15 @@ public class UserService {
 	}
 	
 	private void updateData(User user, User obj) {
-		user.setUsername(obj.getUsername());
-		user.setEmail(obj.getEmail());
-		user.setPassword(encryptPassword(obj.getPassword()));
-		user.setDescription(obj.getDescription());
+		if(obj.getUsername() != null) user.setUsername(obj.getUsername());
+		if(obj.getEmail() != null) user.setEmail(obj.getEmail());
+		if(obj.getPassword() != null) user.setPassword(encryptPassword(obj.getPassword()));
+		if(obj.getDescription() != null) user.setDescription(obj.getDescription());
 	}
 	
 	public String login(RegisterDTO credentials) {
 		List<User> res = repo.findByEmail(credentials.getEmail());
-		if(res != null) {
+		if(res.size() >= 1) {
 			User user = res.get(0);
 			if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
 				return encodeJwt(user.getId().toString(), 2_600_000);

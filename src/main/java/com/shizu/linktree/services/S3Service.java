@@ -3,6 +3,7 @@ package com.shizu.linktree.services;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.System;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class S3Service {
 			fileStream.write(file.getBytes());
 			fileStream.close();
 			User user = service.findById(token);
-			String fileName = user.getUsername() + "_userImg";
+			String fileName = user.getUsername() + "_" + System.currentTimeMillis() + "_userImg";
 			try {
 				s3Client.deleteObject("linktree-upload", fileName);
 			}catch(AmazonServiceException e) {

@@ -37,7 +37,8 @@ public class UserController {
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<User> getUser(@PathVariable Long id, @RequestHeader(value = "authorization", defaultValue ="") String token) {
-		if(service.decodeJwtToken(token) != null) {
+		String decodedJwt = service.decodeJwtToken(token);
+		if(decodedJwt != null && Long.parseLong(decodedJwt) == id) {
 			User user = service.findById(id);
 			return ResponseEntity.ok().body(user);
 		}

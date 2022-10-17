@@ -78,12 +78,14 @@ public class UserService {
 	
 	public void delete(Long id, String token) {
 		String decodedToken = decodeJwtToken(token);
-		try {
-			repo.deleteById(Long.parseLong(decodedToken));
-		}catch(EmptyResultDataAccessException e) {
-			throw new ResourceNotFoundException("Resource with specified id doesn't exists: " + id);
-		}catch(DataIntegrityViolationException e) {
-			throw new DatabaseException("Can't delete an user that have an linktree. Delete the user's linktree first.");
+		if(Long.parseLong(decodedToken) == id) {
+			try {
+				repo.deleteById(Long.parseLong(decodedToken));
+			}catch(EmptyResultDataAccessException e) {
+				throw new ResourceNotFoundException("Resource with specified id doesn't exists: " + id);
+			}catch(DataIntegrityViolationException e) {
+				throw new DatabaseException("Can't delete an user that have an linktree. Delete the user's linktree first.");
+			}
 		}
 	}
 	

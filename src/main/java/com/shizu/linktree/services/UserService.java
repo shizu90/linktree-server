@@ -45,9 +45,8 @@ public class UserService {
 		return repo.findAll();
 	}
 	
-	public User findById(String token) {
-		String decodedJwt = decodeJwtToken(token);
-		Optional<User> user = repo.findById(Long.parseLong(decodedJwt));
+	public User findById(Long id) {
+		Optional<User> user = repo.findById(id);
 		return user.orElseThrow(() -> new ResourceNotFoundException("User not found."));
 	}
 	
@@ -88,9 +87,9 @@ public class UserService {
 		}
 	}
 	
-	public void update(User obj, String token) {
+	public void update(User obj, Long id) {
 		try {
-			User user = findById(token);
+			User user = findById(id);
 			updateData(user, obj);
 			repo.save(user);
 		}catch(EntityNotFoundException e) {
@@ -99,8 +98,12 @@ public class UserService {
 	}
 	
 	private void updateData(User user, User obj) {
-		if(obj.getUsername() != null) user.setUsername(obj.getUsername());
-		if(obj.getEmail() != null) user.setEmail(obj.getEmail());
+		if(obj.getUsername() != null && repo.findByUsername(obj.getUsername()).isEmpty()) {
+			user.setUsername(obj.getUsername());
+		}else throw new AlreadyExistsException("Username already taken.");
+		if(obj.getEmail() != null && repo.findByEmail(obj.getEmail()).isEmpty()) {
+			user.setEmail(obj.getEmail());
+		}else throw new AlreadyExistsException("Email already on use.");
 		if(obj.getPassword() != null) user.setPassword(encryptPassword(obj.getPassword()));
 		if(obj.getDescription() != null) user.setDescription(obj.getDescription());
 	}

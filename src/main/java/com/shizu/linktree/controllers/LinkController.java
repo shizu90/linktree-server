@@ -27,9 +27,11 @@ public class LinkController {
 	
 	@PostMapping(value = "/{id}")
 	public ResponseEntity<Link> postLink(@PathVariable Long id, @RequestBody Link link, @RequestHeader(value = "authorization", defaultValue ="") String token) {
-		User user = userService.findById(token);
-		link.setLinkTree(user.getLinkTree());
-		service.insert(link);
+		if(userService.decodeJwtToken(token) != null) {
+			User user = userService.findById(id);
+			link.setLinkTree(user.getLinkTree());
+			service.insert(link);
+		}
 		return ResponseEntity.ok().body(link);
 	}
 	

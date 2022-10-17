@@ -35,15 +35,19 @@ public class LinkTreeController {
 	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> deleteLinkTree(@PathVariable Long id, @RequestHeader(value = "authorization", defaultValue ="") String token) {
-		User user = userService.findById(token);
-		service.delete(user.getLinkTree().getId() | id);
+		if(userService.decodeJwtToken(token) != null) {
+			User user = userService.findById(id);
+			service.delete(user.getLinkTree().getId() | id);
+		}
 		return ResponseEntity.ok().body(null);
 	}
 	
 	@PutMapping(value = "/{id}")
 	public ResponseEntity<Void> updateLinkTree(@PathVariable Long id, @RequestBody LinkTree linkTree, @RequestHeader(value = "authorization", defaultValue ="") String token) {
-		User user = userService.findById(token);
-		service.update(user.getLinkTree().getId(), linkTree);
+		if(userService.decodeJwtToken(token) != null) {
+			User user = userService.findById(id);
+			service.update(user.getLinkTree().getId(), linkTree);
+		}
 		return ResponseEntity.ok().body(null);
 	}
 }

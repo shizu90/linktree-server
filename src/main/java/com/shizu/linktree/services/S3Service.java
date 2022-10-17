@@ -34,7 +34,7 @@ public class S3Service {
 			FileOutputStream fileStream = new FileOutputStream(uploadedFile);
 			fileStream.write(file.getBytes());
 			fileStream.close();
-			User user = service.findById(token);
+			User user = service.findById(Long.parseLong(service.decodeJwtToken(token)));
 			String fileName = user.getUsername() + "_" + System.currentTimeMillis() + "_userImg";
 			try {
 				s3Client.deleteObject("linktree-upload", fileName);

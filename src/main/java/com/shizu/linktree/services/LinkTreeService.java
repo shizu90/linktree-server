@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.shizu.linktree.entities.LinkTree;
 import com.shizu.linktree.entities.User;
 import com.shizu.linktree.repositories.LinkTreeRepository;
+import com.shizu.linktree.services.exception.DatabaseException;
+import com.shizu.linktree.services.exception.ResourceNotFoundException;
 
 @Service
 public class LinkTreeService {
@@ -22,8 +24,13 @@ public class LinkTreeService {
 	}
 	
 	public LinkTree findByUser(User user) {
-		LinkTree linkTree = repo.findByUser(user).get(0);
-		return linkTree;
+		if(repo.findByUser(user).isEmpty()) {
+			throw new ResourceNotFoundException("Linktree not found.");
+		}else {
+			LinkTree linkTree = repo.findByUser(user).get(0);
+			
+			return linkTree;
+		}
 	}
 	public LinkTree insert(LinkTree linkTree) {
 		return repo.save(linkTree);
@@ -35,7 +42,7 @@ public class LinkTreeService {
 		}catch(EmptyResultDataAccessException e) {
 			throw new RuntimeException();
 		}catch(DataIntegrityViolationException e) {
-			throw new RuntimeException();
+			throw new DatabaseException("Can't delete a linktree that have links on it.");
 		}
 	}
 	

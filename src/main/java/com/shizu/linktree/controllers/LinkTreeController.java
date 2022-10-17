@@ -36,7 +36,7 @@ public class LinkTreeController {
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> deleteLinkTree(@PathVariable Long id, @RequestHeader(value = "authorization", defaultValue ="") String token) {
 		User user = userService.findById(token);
-		service.delete(user.getLinkTree().getId());
+		service.delete(user.getLinkTree().getId() | id);
 		return ResponseEntity.ok().body(null);
 	}
 	

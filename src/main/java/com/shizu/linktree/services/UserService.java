@@ -48,7 +48,7 @@ public class UserService {
 	public User findById(String token) {
 		String decodedJwt = decodeJwtToken(token);
 		Optional<User> user = repo.findById(Long.parseLong(decodedJwt));
-		return user.orElseThrow(() -> new RuntimeException());
+		return user.orElseThrow(() -> new ResourceNotFoundException("User not found."));
 	}
 	
 	public User findByUsername(String username) {
@@ -60,10 +60,14 @@ public class UserService {
 	}
 	
 	public User insert(RegisterDTO credentials) {
-		if(credentials.getPassword().length() < 6) throw new InvalidFormatException("Invalid password format.");
-		if(credentials.getUsername().length() < 4) throw new InvalidFormatException("Invalid username format.");
-		if(!credentials.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) throw new InvalidFormatException("Invalid email format.");
-		if(!credentials.getConfirmPassword().matches(credentials.getPassword())) throw new InvalidFormatException("Passwords mismatch.");
+		if(repo.findByEmail(credentials.getEmail()).isEmpty() && repo.findByUsername(credentials.getUsername()).isEmpty()) {
+			if(credentials.getPassword().length() < 6) throw new InvalidFormatException("Invalid password format.");
+			if(credentials.getUsername().length() < 4) throw new InvalidFormatException("Invalid username format.");
+			if(!credentials.getEmail().matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) throw new InvalidFormatException("Invalid email format.");
+			if(!credentials.getConfirmPassword().matches(credentials.getPassword())) throw new InvalidFormatException("Passwords mismatch.");
+		}else {
+			throw new AlreadyExistsException("Email or username already exists.");
+		}
 		try {
 			credentials.setPassword(encryptPassword(credentials.getPassword()));
 			User user = new User(null, credentials.getUsername(), credentials.getEmail(), credentials.getPassword(), "", "", null);
@@ -80,7 +84,7 @@ public class UserService {
 		}catch(EmptyResultDataAccessException e) {
 			throw new ResourceNotFoundException("Resource with specified id doesn't exists: " + id);
 		}catch(DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new DatabaseException("Can't delete an user that have an linktree. Delete the user's linktree first.");
 		}
 	}
 	

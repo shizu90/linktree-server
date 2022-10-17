@@ -50,7 +50,7 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<User> postUser(@RequestBody RegisterDTO credentials) {
 		User obj = service.insert(credentials);
-		linkTreeService.insert(new LinkTree(null, obj, null, ""));
+		linkTreeService.insert(new LinkTree(null, obj, null, "originalDark"));
 		return ResponseEntity.ok().body(obj);
 	}
 	

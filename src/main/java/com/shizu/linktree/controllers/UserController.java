@@ -78,7 +78,7 @@ public class UserController {
 	public ResponseEntity<Void> updateUser(@PathVariable Long id, @RequestBody User user, @RequestHeader(value = "authorization", defaultValue ="") String token) {
 		User userObj = service.findById(token);
 		service.update(user, token);
-		linkTreeService.update(id, new LinkTree(userObj.getLinkTree().getId(), userObj, null, userObj.getLinkTree().getColorTheme()));
+		linkTreeService.update(userObj.getLinkTree().getId(), new LinkTree(userObj.getLinkTree().getId(), userObj, null, userObj.getLinkTree().getColorTheme()));
 		return ResponseEntity.ok().body(null);
 	}
 	

@@ -102,10 +102,14 @@ public class UserService {
 	private void updateData(User user, User obj) {
 		if(obj.getUsername() != null && repo.findByUsername(obj.getUsername()).isEmpty()) {
 			user.setUsername(obj.getUsername());
-		}else throw new AlreadyExistsException("Username already taken.");
+		}else {
+			if(!repo.findByUsername(obj.getUsername()).isEmpty()) throw new AlreadyExistsException("Username already taken.");
+		}
 		if(obj.getEmail() != null && repo.findByEmail(obj.getEmail()).isEmpty()) {
 			user.setEmail(obj.getEmail());
-		}else throw new AlreadyExistsException("Email already on use.");
+		}else {
+			if(!repo.findByEmail(obj.getEmail()).isEmpty()) throw new AlreadyExistsException("Email already on use.");
+		}
 		if(obj.getPassword() != null) user.setPassword(encryptPassword(obj.getPassword()));
 		if(obj.getDescription() != null) user.setDescription(obj.getDescription());
 	}
